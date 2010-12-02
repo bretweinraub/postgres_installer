@@ -1,0 +1,19 @@
+
+To install 9.0.1 on your box, run
+
+./install.sh -v 9.0.1 -p [port your 9.0.1 server will listen on]
+
+e.g
+
+./install.sh -v 9.0.1 -p 15432
+
+This will create a 9.0.1 runner script
+
+~postgres/9.0.1.sh
+
+So you can interact w/ your 9.0.1 environment like this
+
+~postgres/9.0.1.sh createdb blah
+
+etc.
+
