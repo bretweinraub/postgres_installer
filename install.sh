@@ -370,6 +370,10 @@ moved over, like this:
 
 sudo su - postgres -c bash -c 'cp /etc/postgresql/8.4/main/pg_hba.conf ~postgres/${version}/data/pg_hba.conf'
 
+Following the same theme, you can't start your server like this:
+
+sudo su - postgres -c bash -c '~postgres/${version}.sh pg_ctl -D $HOME/${version}/data -l logfile start'
+
 Hopefully this worked for you....
 
 EOF
