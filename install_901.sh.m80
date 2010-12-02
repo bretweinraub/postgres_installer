@@ -1,0 +1,122 @@
+<: # -*-sh-*-
+use Helpers::shellHelpers; # $m80path = [{command => "embedperl"}, {command => "m4", chmod => "+x" }];
+print Helpers::shellHelpers::shellScript ( r => [],
+                                           getopts => '(v,version),(p,-port),(-s,skipconfigure),(i,installdir),(-n,-nomake)'); 
+:>
+
+version=${version:-9.0.1}
+installdir=${installdir:-/usr/local/postgres-${version}}
+
+if [ ! -f postgresql-${version}.tar ] ; then
+    if [ ! -f postgresql-${version}.tar.bz2 ]; then
+	docmd wget http://wwwmaster.postgresql.org/download/mirrors-ftp/source/v${version}/postgresql-${version}.tar.bz2
+    fi
+    docmd bunzip postgresql-${version}.tar.bz2
+fi
+
+if [ ! -d postgresql-${version} ]; then
+    tar xvf postgresql-${version}.tar
+fi
+
+docmd cd postgresql-${version}
+
+if [ -z "${skipconfigure}" ]; then
+    exit 0
+    docmd ./configure --with-pgport=$port --prefix=${installdir}
+else
+    printmsg skipping configure in virtue of -s flag
+fi
+
+if [ -z "${nomake}" ]; then
+    docmd make -f GNUmakefile -j2
+    docmd make check
+    docmd sudo make install
+else
+    printmsg skipping make and install in virtue of -n flag
+fi
+
+sudo su - postgres -c 'bash' <<EOF
+
+export PATH=${installdir}/bin:$PATH
+export MANPATH=${installdir}/man:$MANPATH
+export LD_LIBRARY_PATH=${installdir}/lib:$LD_LIBRARY_PATH
+
+
+if [ ! -d \$HOME/${version}/data ]; then
+mkdir -p \$HOME/${version}/data
+initdb -D  \$HOME/${version}/data
+else
+echo "skipping initdb since \$HOME/${version}/data exists.  Remove this to override this check."
+fi
+
+cat > ${version}.sh <<EOF901
+#!/bin/bash
+export PATH=/usr/local/postgres-9.0.1/bin:\\\$PATH
+export MANPATH=/usr/local/postgres-9.0.1/man:\\\$MANPATH
+export LD_LIBRARY_PATH=/usr/local/postgres-9.0.1/lib:\\\$LD_LIBRARY_PATH
+
+exec \\\$*
+
+EOF901
+chmod +x ${version}.sh
+
+EOF
+
+if [ $? -ne 0 ]; then
+    cleanup 1 something went wrong
+else
+    cat <<EOF
+################################################################################
+
+SUCCESS!!!!!
+
+You've installed postgres version ${version} to ${installdir}.
+
+The server is configured to listen by default on port ${port} and is started as shown above
+
+You'll want to set this in your environment to interact with this database:
+
+export PATH=${installdir}/bin:\$PATH
+export MANPATH=${installdir}/man:\$MANPATH
+export LD_LIBRARY_PATH=${installdir}/lib:\$LD_LIBRARY_PATH
+
+In case initdb didn't run, it wants to tell you (as postgres, and with the env vars shown above):
+
+Success. You can now start the database server using:
+
+    postgres -D \$HOME/${version}/data
+or
+    pg_ctl -D \$HOME/${version}/data -l logfile start
+
+
+Also as a help, a wrapper script was left in ~postgres/${version}.sh
+
+You can run like this:
+
+~postgres/${version}.sh pg_ctl -D \$HOME/${version}/data -l logfile start
+
+and it'll run whatever commands you pass it for that version of postgres.
+
+One last thing .... I didn't modify your file:
+
+~postgres/${version}/data/pg_hba.conf
+
+You'll probably want your setting from 
+
+/etc/postgresql/8.4/pg_hba.conf 
+
+moved over, like this:
+
+sudo su - postgres -c bash -c 'cp /etc/postgresql/8.4/main/pg_hba.conf ~postgres/${version}/data/pg_hba.conf'
+
+Following the same theme, you can't start your server like this:
+
+sudo su - postgres -c bash -c '~postgres/${version}.sh pg_ctl -D $HOME/${version}/data -l logfile start'
+
+Hopefully this worked for you....
+
+EOF
+fi
+
+cleanup 0
+    
