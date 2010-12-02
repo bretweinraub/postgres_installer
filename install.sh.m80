@@ -1,7 +1,7 @@
 <: # -*-sh-*-
 use Helpers::shellHelpers; # $m80path = [{command => "embedperl"}, {command => "m4", chmod => "+x" }];
 print Helpers::shellHelpers::shellScript ( r => [],
-                                           getopts => '(v,version),(p,-port),(-s,skipconfigure),(i,installdir),(-n,-nomake)'); 
+                                           getopts => '(v,version),(p,-port),(-s,skipconfigure),(i,installdir),(-n,nomake)'); 
 :>
 
 version=${version:-9.0.1}

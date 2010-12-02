@@ -215,7 +215,7 @@ usage () {
   printmsg  I am unhappy ...... a usage message follows for your benefit
   printmsg  Usage is -v {version} -p {port} -s {skipconfigure=TRUE} -i {installdir} -n {nomake=TRUE} 
 
-printmsg  Required variables: port nomake 
+printmsg  Required variables: port 
 
 
   cleanup 1
@@ -251,10 +251,6 @@ done
 
 test -z "${port}" && {
 	printmsg missing value for port
-	usage
-}
-test -z "${nomake}" && {
-	printmsg missing value for nomake
 	usage
 }
 
