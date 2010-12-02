@@ -268,7 +268,7 @@ if [ ! -f postgresql-${version}.tar ] ; then
     if [ ! -f postgresql-${version}.tar.bz2 ]; then
 	docmd wget http://wwwmaster.postgresql.org/download/mirrors-ftp/source/v${version}/postgresql-${version}.tar.bz2
     fi
-    docmd bunzip postgresql-${version}.tar.bz2
+    docmd bunzip2 postgresql-${version}.tar.bz2
 fi
 
 if [ ! -d postgresql-${version} ]; then
