@@ -266,7 +266,7 @@ installdir=${installdir:-/usr/local/postgres-${version}}
 
 if [ ! -f postgresql-${version}.tar ] ; then
     if [ ! -f postgresql-${version}.tar.bz2 ]; then
-	docmd wget http://wwwmaster.postgresql.org/download/mirrors-ftp/source/v${version}/postgresql-${version}.tar.bz2
+	docmd wget http://wwwmaster.postgresql.org/redir/170/h/source/v${version}/postgresql-${version}.tar.bz2
     fi
     docmd bunzip2 postgresql-${version}.tar.bz2
 fi
@@ -308,9 +308,9 @@ fi
 
 cat > ${version}.sh <<EOF901
 #!/bin/bash
-export PATH=/usr/local/postgres-9.0.1/bin:\\\$PATH
-export MANPATH=/usr/local/postgres-9.0.1/man:\\\$MANPATH
-export LD_LIBRARY_PATH=/usr/local/postgres-9.0.1/lib:\\\$LD_LIBRARY_PATH
+export PATH=/usr/local/postgres-${version}/bin:\\\$PATH
+export MANPATH=/usr/local/postgres-${version}/man:\\\$MANPATH
+export LD_LIBRARY_PATH=/usr/local/postgres-${version}/lib:\\\$LD_LIBRARY_PATH
 
 exec \\\$*
 
