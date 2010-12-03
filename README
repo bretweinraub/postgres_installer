@@ -17,3 +17,9 @@ So you can interact w/ your 9.0.1 environment like this
 
 etc.
 
+To set XTRA Config Options:
+
+env PGCONFIG_OPTIONS='--with-some-other-stuff' ./install.sh -v 9.0.1 -p 15432
+
+
+
