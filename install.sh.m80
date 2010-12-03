@@ -21,7 +21,7 @@ fi
 docmd cd postgresql-${version}
 
 if [ -z "${skipconfigure}" ]; then
-    docmd ./configure --with-pgport=$port --prefix=${installdir}
+    docmd ./configure --with-pgport=$port --prefix=${installdir} ${PGCONFIG_OPTIONS}
 else
     printmsg skipping configure in virtue of -s flag
 fi
